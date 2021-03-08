@@ -1,0 +1,9 @@
+include ':api'
+include ':apt'
+include ':common'
+
+include ':test2'
+include ':test'
+include ':main-test'
+
+rootProject.name = "router"

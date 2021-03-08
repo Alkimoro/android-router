@@ -1,0 +1,56 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 29
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api 'cn.linked.router:common:1.0.0-SNAPSHOT'
+}
+
+/** 发布模块配置 */
+// 发布源代码Task
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId 'cn.linked.router'
+                artifactId 'api'
+                version '1.0.0-SNAPSHOT'
+
+                // 上传source，这样使用方可以看到方法注释
+                artifact generateSourcesJar
+                // Gradle 3.6.0 对Android的支持 根据不同的Android模块生成相应的内容 AAR AAB等
+                from components.release
+            }
+        }
+        repositories {
+            maven {
+                mavenLocal()
+            }
+        }
+    }
+}
